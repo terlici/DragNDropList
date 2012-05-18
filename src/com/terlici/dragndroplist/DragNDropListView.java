@@ -140,9 +140,10 @@ public class DragNDropListView extends ListView {
 	 */
 	private void startDrag(int itemIndex, int y) {
 		View item = getChildAt(itemIndex);
+		
 		if (item == null) return;
 
-		long id = getItemIdAtPosition(itemIndex);
+		long id = getItemIdAtPosition(mStartPosition);
 		if (mDragNDropListener != null)
         	mDragNDropListener.onItemDrag(this, item, mStartPosition, id);
         
@@ -193,7 +194,7 @@ public class DragNDropListView extends ListView {
 		View item = getChildAt(itemIndex);
 		
 		if (endPosition != INVALID_POSITION) {
-			long id = getItemIdAtPosition(itemIndex);
+			long id = getItemIdAtPosition(mStartPosition);
 			
 			if (mDragNDropListener != null)
 	        	mDragNDropListener.onItemDrop(this, item, mStartPosition, endPosition, id);
