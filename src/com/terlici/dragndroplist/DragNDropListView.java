@@ -21,7 +21,7 @@ public class DragNDropListView extends ListView {
 	boolean mDragMode;
 
 	int mStartPosition = INVALID_POSITION;
-	int mDragPointOffset; //Used to adjust drag view location
+	int mDragPointOffset; // Used to adjust drag view location
 	int mDragHandler = 0;
 	
 	ImageView mDragView;
@@ -66,8 +66,8 @@ public class DragNDropListView extends ListView {
 		
 		if (startposition == INVALID_POSITION) return false;
 		
-		int itemposition = startposition - getFirstVisiblePosition();
-		View parent = getChildAt(itemposition);
+		int childposition = startposition - getFirstVisiblePosition();
+		View parent = getChildAt(childposition);
 		View handler = parent.findViewById(mDragHandler);
 		
 		if (handler == null) return false;
@@ -95,23 +95,20 @@ public class DragNDropListView extends ListView {
 		final int y = (int)ev.getY();
 		
 		
-		if (action == MotionEvent.ACTION_DOWN && isDrag(ev)) {
-			mDragMode = true;
-		}
+		if (action == MotionEvent.ACTION_DOWN && isDrag(ev)) mDragMode = true;
 
-		if (!mDragMode) 
-			return super.onTouchEvent(ev);
+		if (!mDragMode) return super.onTouchEvent(ev);
 
 		switch (action) {
 			case MotionEvent.ACTION_DOWN:
 				mStartPosition = pointToPosition(x, y);
 				
 				if (mStartPosition != INVALID_POSITION) {
-					int itemPosition = mStartPosition - getFirstVisiblePosition();
-                    mDragPointOffset = y - getChildAt(itemPosition).getTop();
+					int childPosition = mStartPosition - getFirstVisiblePosition();
+                    mDragPointOffset = y - getChildAt(childPosition).getTop();
                     mDragPointOffset -= ((int)ev.getRawY()) - y;
                     
-					startDrag(itemPosition, y);
+					startDrag(childPosition, y);
 					drag(0, y);
 				}
 				
@@ -135,11 +132,11 @@ public class DragNDropListView extends ListView {
 	/**
 	 * Prepare the drag view.
 	 * 
-	 * @param itemIndex
+	 * @param childIndex
 	 * @param y
 	 */
-	private void startDrag(int itemIndex, int y) {
-		View item = getChildAt(itemIndex);
+	private void startDrag(int childIndex, int y) {
+		View item = getChildAt(childIndex);
 		
 		if (item == null) return;
 
@@ -179,19 +176,18 @@ public class DragNDropListView extends ListView {
         mDragView = v;
         
         item.setVisibility(View.INVISIBLE);
-        
-        invalidateViews();
+        item.invalidate(); // We have not changed anything else.
 	}
 	
 	/**
 	 * Release all dragging resources.
 	 * 
-	 * @param itemIndex
+	 * @param childIndex
 	 */
-	private void stopDrag(int itemIndex, int endPosition) {
+	private void stopDrag(int childIndex, int endPosition) {
 		if (mDragView == null) return;
 
-		View item = getChildAt(itemIndex);
+		View item = getChildAt(childIndex);
 		
 		if (endPosition != INVALID_POSITION) {
 			long id = getItemIdAtPosition(mStartPosition);
@@ -216,7 +212,7 @@ public class DragNDropListView extends ListView {
         
         mStartPosition = INVALID_POSITION;
         
-        invalidateViews();
+        invalidateViews(); // We have changed the adapter data, so change everything
 	}
 	
 	/**
