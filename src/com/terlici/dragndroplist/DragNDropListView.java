@@ -26,6 +26,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Adapter;
+import android.widget.WrapperListAdapter;
+
+import com.terlici.dragndroplist.DragNDropAdapter;
 
 public class DragNDropListView extends ListView {
 	
@@ -157,10 +161,21 @@ public class DragNDropListView extends ListView {
 		if (item == null) return;
 
 		long id = getItemIdAtPosition(mStartPosition);
+
 		if (mDragNDropListener != null)
         	mDragNDropListener.onItemDrag(this, item, mStartPosition, id);
-        
-        ((DragNDropAdapter)getAdapter()).onItemDrag(this, item, mStartPosition, id);
+
+        Adapter adapter = getAdapter();
+        DragNDropAdapter dndAdapter;
+
+        // if exists a footer/header we have our adapter wrapped
+        if (adapter instanceof WrapperListAdapter) {
+            dndAdapter = (DragNDropAdapter)((WrapperListAdapter)adapter).getWrappedAdapter();
+        } else {
+            dndAdapter = (DragNDropAdapter)adapter;
+        }
+
+        dndAdapter.onItemDrag(this, item, mStartPosition, id);
 
 		item.setDrawingCacheEnabled(true);
 		
@@ -204,15 +219,25 @@ public class DragNDropListView extends ListView {
 		if (mDragView == null) return;
 
 		View item = getChildAt(childIndex);
-		
-		if (endPosition != INVALID_POSITION) {
-			long id = getItemIdAtPosition(mStartPosition);
-			
-			if (mDragNDropListener != null)
-	        	mDragNDropListener.onItemDrop(this, item, mStartPosition, endPosition, id);
-	        
-	        ((DragNDropAdapter)getAdapter()).onItemDrop(this, item, mStartPosition, endPosition, id);
-		}
+
+        if (endPosition != INVALID_POSITION) {
+            long id = getItemIdAtPosition(mStartPosition);
+
+            if (mDragNDropListener != null)
+                mDragNDropListener.onItemDrop(this, item, mStartPosition, endPosition, id);
+
+            Adapter adapter = getAdapter();
+            DragNDropAdapter dndAdapter;
+
+            // if exists a footer/header we have our adapter wrapped
+            if (adapter instanceof WrapperListAdapter) {
+                dndAdapter = (DragNDropAdapter)((WrapperListAdapter)adapter).getWrappedAdapter();
+            } else {
+                dndAdapter = (DragNDropAdapter)adapter;
+            }
+
+            dndAdapter.onItemDrop(this, item, mStartPosition, endPosition, id);
+        }
 		
         mDragView.setVisibility(GONE);
         WindowManager wm = (WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE);
