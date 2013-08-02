@@ -40,6 +40,7 @@ public class DragNDropListView extends ListView {
 	
 	boolean mDragMode;
 
+	WindowManager mWm;
 	int mStartPosition = INVALID_POSITION;
 	int mDragPointOffset; // Used to adjust drag view location
 	int mDragHandler = 0;
@@ -47,17 +48,27 @@ public class DragNDropListView extends ListView {
 	ImageView mDragView;
 	
 	OnItemDragNDropListener mDragNDropListener;
+
+	private void init() {
+		mWm = (WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE);
+	}
 	
 	public DragNDropListView(Context context) {
 		super(context);
+
+		init();
 	}
 	
 	public DragNDropListView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+
+		init();
 	}
 	
 	public DragNDropListView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
+
+		init();
 	}
 	
 	public void setOnItemDragNDropListener(OnItemDragNDropListener listener) {
@@ -209,8 +220,7 @@ public class DragNDropListView extends ListView {
         ImageView v = new ImageView(context);
         v.setImageBitmap(bitmap);
 
-        WindowManager mWindowManager = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
-        mWindowManager.addView(v, mWindowParams);
+        mWm.addView(v, mWindowParams);
         mDragView = v;
         
         item.setVisibility(View.INVISIBLE);
@@ -247,8 +257,7 @@ public class DragNDropListView extends ListView {
         }
 		
         mDragView.setVisibility(GONE);
-        WindowManager wm = (WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE);
-        wm.removeView(mDragView);
+        mWm.removeView(mDragView);
         
         mDragView.setImageDrawable(null);
         mDragView = null;
@@ -275,9 +284,7 @@ public class DragNDropListView extends ListView {
 		WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams)mDragView.getLayoutParams();
 		layoutParams.x = x;
 		layoutParams.y = y - mDragPointOffset;
-		
-		WindowManager mWindowManager = (WindowManager) getContext()
-				.getSystemService(Context.WINDOW_SERVICE);
-		mWindowManager.updateViewLayout(mDragView, layoutParams);
+
+		mWm.updateViewLayout(mDragView, layoutParams);
 	}
 }
