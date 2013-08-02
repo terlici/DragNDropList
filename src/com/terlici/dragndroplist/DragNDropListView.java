@@ -141,8 +141,15 @@ public class DragNDropListView extends ListView {
 			default:
 				mDragMode = false;
 				
-				if (mStartPosition != INVALID_POSITION)
-					stopDrag(mStartPosition - getFirstVisiblePosition(), pointToPosition(x,y));
+
+				if (mStartPosition != INVALID_POSITION) {
+					// check if the position is a header/footer
+					int actualPosition =  pointToPosition(x,y);
+					if (actualPosition > (getCount() - getFooterViewsCount()) - 1)
+						actualPosition = INVALID_POSITION;
+
+					stopDrag(mStartPosition - getFirstVisiblePosition(), actualPosition);
+				}
 				break;
 		}
 		
