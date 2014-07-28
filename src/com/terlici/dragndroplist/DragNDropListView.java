@@ -128,7 +128,7 @@ public class DragNDropListView extends ListView {
 		
 		if (action == MotionEvent.ACTION_DOWN && isDrag(ev)) mDragMode = true;
 
-		if (!mDragMode) return super.onTouchEvent(ev);
+        if (!mDragMode || !isDraggingEnabled) return super.onTouchEvent(ev);
 
 		switch (action) {
 			case MotionEvent.ACTION_DOWN:
@@ -287,4 +287,11 @@ public class DragNDropListView extends ListView {
 
 		mWm.updateViewLayout(mDragView, layoutParams);
 	}
+
+    private boolean isDraggingEnabled = true;
+
+    public void setDraggingEnabled(boolean draggingEnabled)
+    {
+        this.isDraggingEnabled = draggingEnabled;
+    }
 }
