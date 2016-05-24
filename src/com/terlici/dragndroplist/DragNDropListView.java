@@ -103,9 +103,16 @@ public class DragNDropListView extends ListView {
 		
 		if (handler == null) return false;
 		
-		int top = parent.getTop() + handler.getTop();
+		int top = handler.getTop();
+		int left = handler.getLeft();
+		View subParent = handler;
+		do {
+			subParent = (View)subParent.getParent();
+			top += subParent.getTop();
+			left += subParent.getLeft();
+		} while(subParent != parent);
+
 		int bottom = top + handler.getHeight();
-		int left = parent.getLeft() + handler.getLeft();
 		int right = left + handler.getWidth();
 		
 		return left <= x && x <= right && top <= y && y <= bottom;
